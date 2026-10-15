@@ -2,8 +2,7 @@
 
 > Aplicación web modular, ligera y moderna para crear, editar y presentar diapositivas interactivas en tiempo real, construida con **HTML5 Semántico, Vanilla CSS, W3.CSS, Vanilla JavaScript (ES Modules), IndexedDB y LocalStorage**.
 
-Repositorio Remoto Principal: [https://github.com/Rubick05/importadora_sergio.git](https://github.com/Rubick05/importadora_sergio.git)  
-Repositorio Alternativo: [https://github.com/Rubick05/Proyecto_web_rodriguez_condori.git](https://github.com/Rubick05/Proyecto_web_rodriguez_condori.git)
+Repositorio Remoto: [https://github.com/Rubick05/Proyecto_web_rodriguez_condori.git](https://github.com/Rubick05/Proyecto_web_rodriguez_condori.git)
 
 ---
 
