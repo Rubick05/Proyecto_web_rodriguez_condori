@@ -1,0 +1,50 @@
+import React from 'react'
+import type { Slide } from '../../models/Slide'
+
+export interface LayoutProps {
+  slide: Slide
+  isEditable?: boolean
+  onUpdate?: (partial: Partial<Slide>) => void
+}
+
+/**
+ * Layout 1: Solo Texto (Capa View)
+ * Enfoque en tipografía limpia, jerarquía de títulos y contenido narrativo.
+ */
+export const LayoutTextOnly: React.FC<LayoutProps> = ({
+  slide,
+  isEditable = false,
+  onUpdate,
+}) => {
+  if (isEditable) {
+    return (
+      <div className="flex flex-col h-full justify-center space-y-6 max-w-3xl mx-auto w-full">
+        <input
+          type="text"
+          value={slide.title}
+          onChange={(e) => onUpdate?.({ title: e.target.value })}
+          placeholder="Escribe el título de la diapositiva..."
+          className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight bg-transparent border-b-2 border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full pb-1"
+        />
+        <textarea
+          value={slide.content}
+          onChange={(e) => onUpdate?.({ content: e.target.value })}
+          placeholder="Ingresa aquí las ideas clave, puntos o texto explicativo..."
+          rows={6}
+          className="text-base sm:text-lg text-slate-600 leading-relaxed bg-transparent border border-dashed border-slate-200 hover:border-slate-300 focus:border-indigo-500 rounded-lg p-3 resize-none focus:outline-none transition-colors"
+        />
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col h-full justify-center max-w-3xl mx-auto w-full space-y-6 animate-fadeIn">
+      <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+        {slide.title}
+      </h2>
+      <div className="text-lg sm:text-2xl text-slate-600 font-light leading-relaxed whitespace-pre-line">
+        {slide.content}
+      </div>
+    </div>
+  )
+}
