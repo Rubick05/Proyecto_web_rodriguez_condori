@@ -8,6 +8,7 @@ import {
   X,
   Maximize2,
   Minimize2,
+  Printer,
 } from 'lucide-react'
 
 export interface PresentationViewProps {
@@ -17,6 +18,7 @@ export interface PresentationViewProps {
   onNextSlide: () => void
   onPrevSlide: () => void
   onExitPresentation: () => void
+  onPrintPdf?: () => void
 }
 
 /**
@@ -32,6 +34,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
   onNextSlide,
   onPrevSlide,
   onExitPresentation,
+  onPrintPdf,
 }) => {
   const activeSlide = slides[currentIndex] || slides[0]
   const progressPercent = ((currentIndex + 1) / Math.max(slides.length, 1)) * 100
@@ -88,7 +91,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
       </div>
 
       {/* Barra de progreso inferior */}
-      <div className="absolute bottom-0 inset-x-0 h-1.5 bg-slate-800">
+      <div className="absolute bottom-0 inset-x-0 h-1.5 bg-slate-800 no-print">
         <div
           className="h-full bg-indigo-500 transition-all duration-300"
           style={{ width: `${progressPercent}%` }}
@@ -96,7 +99,7 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
       </div>
 
       {/* Controles Flotantes para el Presentador (Visibles al pasar el ratón) */}
-      <div className="absolute bottom-6 flex items-center gap-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2 rounded-full shadow-2xl opacity-40 hover:opacity-100 transition-opacity">
+      <div className="absolute bottom-6 flex items-center gap-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2 rounded-full shadow-2xl opacity-40 hover:opacity-100 transition-opacity no-print">
         <button
           onClick={onPrevSlide}
           disabled={currentIndex === 0}
@@ -132,6 +135,16 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
             <Maximize2 className="w-4 h-4" />
           )}
         </button>
+
+        {onPrintPdf && (
+          <button
+            onClick={onPrintPdf}
+            className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+            title="Guardar como PDF / Imprimir"
+          >
+            <Printer className="w-4 h-4" />
+          </button>
+        )}
 
         <button
           onClick={onExitPresentation}

@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { useProjectController } from '../controllers/useProjectController'
 import { useSlideController } from '../controllers/useSlideController'
 import { EditorView } from './containers/EditorView'
 import { PresentationView } from './containers/PresentationView'
+import { HtmlPresentationExporter } from '../infrastructure/HtmlPresentationExporter'
+import { JsonProjectExporter } from '../infrastructure/JsonProjectExporter'
+import { downloadResult } from '../utils/fileDownloader'
 import { Loader2 } from 'lucide-react'
 
 /**
@@ -10,7 +13,7 @@ import { Loader2 } from 'lucide-react'
  * 
  * Orquesta los controladores de Proyecto y Diapositivas,
  * gestiona la alternancia entre Modo Edición y Modo Presentación,
- * y sincroniza la persistencia reactiva en IndexedDB.
+ * sincroniza la persistencia reactiva en IndexedDB y coordina los exportadores (Fase 4).
  */
 export const App: React.FC = () => {
   const {
@@ -54,6 +57,23 @@ export const App: React.FC = () => {
     }))
   }, [slides, setProject])
 
+  // Handlers de exportación (Fase 4 - IExporter implementations)
+  const handleExportHtml = useCallback(async () => {
+    const exporter = new HtmlPresentationExporter()
+    const result = await exporter.export({ ...project, slides })
+    downloadResult(result)
+  }, [project, slides])
+
+  const handleExportJson = useCallback(async () => {
+    const exporter = new JsonProjectExporter()
+    const result = await exporter.export({ ...project, slides })
+    downloadResult(result)
+  }, [project, slides])
+
+  const handlePrintPdf = useCallback(() => {
+    window.print()
+  }, [])
+
   // Pantalla de carga mientras se inicializa IndexedDB
   if (isLoading) {
     return (
@@ -75,6 +95,7 @@ export const App: React.FC = () => {
         onNextSlide={nextSlide}
         onPrevSlide={prevSlide}
         onExitPresentation={() => setIsPresentationMode(false)}
+        onPrintPdf={handlePrintPdf}
       />
     )
   }
@@ -93,6 +114,9 @@ export const App: React.FC = () => {
       onUpdateProjectMeta={updateProjectMeta}
       onSaveProject={() => saveProject({ ...project, slides })}
       onStartPresentation={() => setIsPresentationMode(true)}
+      onExportHtml={handleExportHtml}
+      onExportJson={handleExportJson}
+      onPrintPdf={handlePrintPdf}
       isSaving={isSaving}
     />
   )
