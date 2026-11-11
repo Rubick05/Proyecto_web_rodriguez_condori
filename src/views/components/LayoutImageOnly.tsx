@@ -27,17 +27,17 @@ export const LayoutImageOnly: React.FC<LayoutProps> = ({
 
   if (isEditable) {
     return (
-      <div className="flex flex-col h-full justify-between max-w-4xl mx-auto w-full space-y-4">
-        <input
-          type="text"
+      <div className="flex flex-col h-full justify-between max-w-4xl mx-auto w-full space-y-3">
+        <textarea
           value={slide.title}
           onChange={(e) => onUpdate?.({ title: e.target.value })}
           placeholder="Título del gráfico o imagen..."
-          className="text-2xl sm:text-3xl font-bold text-slate-800 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full"
+          rows={1}
+          className="text-xl sm:text-2xl font-bold text-slate-800 leading-snug bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full resize-none shrink-0"
         />
 
         {/* Contenedor de Imagen y Selector */}
-        <div className="relative flex-1 min-h-[220px] max-h-[360px] bg-slate-900 rounded-xl overflow-hidden shadow-inner group">
+        <div className="relative flex-1 min-h-[200px] max-h-[350px] bg-slate-900 rounded-xl overflow-hidden shadow-inner group">
           <img
             src={currentImage}
             alt={slide.title}
@@ -81,13 +81,13 @@ export const LayoutImageOnly: React.FC<LayoutProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full justify-center max-w-4xl mx-auto w-full items-center space-y-4">
+    <div className="flex flex-col h-full justify-center max-w-4xl mx-auto w-full items-center space-y-3">
       {slide.title && (
-        <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 text-center tracking-tight">
+        <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 text-center tracking-tight leading-snug shrink-0 break-words">
           {slide.title}
         </h2>
       )}
-      <div className="relative w-full flex-1 max-h-[420px] rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
+      <div className="relative w-full flex-1 max-h-[400px] rounded-2xl overflow-hidden shadow-2xl border border-slate-100">
         <img
           src={currentImage}
           alt={slide.title}
@@ -95,7 +95,7 @@ export const LayoutImageOnly: React.FC<LayoutProps> = ({
         />
       </div>
       {slide.imageCaption && (
-        <p className="text-xs sm:text-sm text-slate-500 italic text-center">
+        <p className="text-xs sm:text-sm text-slate-500 italic text-center shrink-0">
           {slide.imageCaption}
         </p>
       )}

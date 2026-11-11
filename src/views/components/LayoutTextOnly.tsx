@@ -18,13 +18,13 @@ export const LayoutTextOnly: React.FC<LayoutProps> = ({
 }) => {
   if (isEditable) {
     return (
-      <div className="flex flex-col h-full justify-center space-y-6 max-w-3xl mx-auto w-full">
-        <input
-          type="text"
+      <div className="flex flex-col h-full justify-center space-y-4 max-w-3xl mx-auto w-full overflow-hidden">
+        <textarea
           value={slide.title}
           onChange={(e) => onUpdate?.({ title: e.target.value })}
           placeholder="Escribe el título de la diapositiva..."
-          className="text-3xl sm:text-4xl font-extrabold text-slate-800 tracking-tight bg-transparent border-b-2 border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full pb-1"
+          rows={2}
+          className="text-2xl sm:text-4xl font-extrabold text-slate-800 tracking-tight leading-tight bg-transparent border-b-2 border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full pb-1 resize-none"
         />
         <textarea
           value={slide.content}
@@ -38,8 +38,8 @@ export const LayoutTextOnly: React.FC<LayoutProps> = ({
   }
 
   return (
-    <div className="flex flex-col h-full justify-center max-w-3xl mx-auto w-full space-y-6 animate-fadeIn">
-      <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+    <div className="flex flex-col h-full justify-center max-w-3xl mx-auto w-full space-y-5 animate-fadeIn">
+      <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight break-words">
         {slide.title}
       </h2>
       <div className="text-lg sm:text-2xl text-slate-600 font-light leading-relaxed whitespace-pre-line">

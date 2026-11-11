@@ -22,6 +22,7 @@ import {
   Upload,
   FileDown,
   AlertCircle,
+  User,
 } from 'lucide-react'
 
 export interface EditorViewProps {
@@ -135,7 +136,7 @@ export const EditorView: React.FC<EditorViewProps> = ({
             <div className="p-2 bg-indigo-50 text-indigo-600 rounded-lg shrink-0">
               <LayoutTemplate className="w-5 h-5" />
             </div>
-            <div className="flex flex-col min-w-0 flex-1 max-w-md">
+            <div className="flex flex-col min-w-0 flex-1 max-w-sm">
               <input
                 type="text"
                 value={project.title}
@@ -143,9 +144,16 @@ export const EditorView: React.FC<EditorViewProps> = ({
                 className="text-sm font-bold text-slate-800 bg-transparent hover:bg-slate-50 focus:bg-white border border-transparent focus:border-indigo-400 rounded px-1.5 py-0.5 focus:outline-none transition-all truncate"
                 placeholder="Título del proyecto..."
               />
-              <span className="text-[11px] text-slate-400 px-1.5">
-                Almacenado localmente en IndexedDB
-              </span>
+              <div className="flex items-center gap-1.5 px-1.5 text-[11px] text-slate-400">
+                <User className="w-3 h-3 text-slate-400 shrink-0" />
+                <input
+                  type="text"
+                  value={project.author || ''}
+                  onChange={(e) => onUpdateProjectMeta({ author: e.target.value })}
+                  className="bg-transparent hover:bg-slate-50 focus:bg-white text-slate-600 focus:text-slate-800 rounded px-1 py-0 border border-transparent focus:border-indigo-300 focus:outline-none text-[11px] transition-all w-full"
+                  placeholder="Nombre del autor..."
+                />
+              </div>
             </div>
           </div>
 

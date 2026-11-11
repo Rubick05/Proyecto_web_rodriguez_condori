@@ -26,12 +26,12 @@ export const LayoutTextAndImage: React.FC<LayoutProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 h-full items-center max-w-5xl mx-auto w-full">
         {/* Columna Izquierda: Textos */}
         <div className="flex flex-col space-y-4">
-          <input
-            type="text"
+          <textarea
             value={slide.title}
             onChange={(e) => onUpdate?.({ title: e.target.value })}
             placeholder="Título de la diapositiva..."
-            className="text-2xl sm:text-3xl font-extrabold text-slate-800 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full pb-1"
+            rows={2}
+            className="text-2xl sm:text-3xl font-extrabold text-slate-800 leading-tight bg-transparent border-b border-transparent hover:border-slate-300 focus:border-indigo-600 focus:outline-none transition-colors w-full pb-1 resize-none"
           />
           <textarea
             value={slide.content}
@@ -76,7 +76,7 @@ export const LayoutTextAndImage: React.FC<LayoutProps> = ({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-10 h-full items-center max-w-5xl mx-auto w-full">
       <div className="flex flex-col space-y-4">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-snug">
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-snug break-words">
           {slide.title}
         </h2>
         <div className="text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line font-normal">
