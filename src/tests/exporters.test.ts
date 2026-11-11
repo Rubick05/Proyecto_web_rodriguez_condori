@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest'
 import { HtmlPresentationExporter } from '../infrastructure/HtmlPresentationExporter'
 import { JsonProjectExporter } from '../infrastructure/JsonProjectExporter'
+import { PdfPresentationExporter } from '../infrastructure/PdfPresentationExporter'
 import { createDefaultProject } from '../models/Project'
 import { createDefaultSlide } from '../models/Slide'
 
@@ -94,5 +95,19 @@ describe('Fase 4: Exporters (IExporter implementations)', () => {
       expect(parsed.slides[0].notes).toBe('Recordar enfatizar el ROI esperado.')
     })
   })
-})
 
+  describe('PdfPresentationExporter', () => {
+    it('debe implementar IExporter y generar un Blob PDF válido', async () => {
+      const exporter = new PdfPresentationExporter()
+      expect(exporter.formatName).toBe('Documento PDF')
+      expect(exporter.extension).toBe('pdf')
+
+      const project = setupTestProject()
+      const result = await exporter.export(project)
+
+      expect(result.mimeType).toBe('application/pdf')
+      expect(result.filename.endsWith('.pdf')).toBe(true)
+      expect(result.content).toBeInstanceOf(Blob)
+    })
+  })
+})

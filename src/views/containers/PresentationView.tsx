@@ -9,6 +9,7 @@ import {
   Maximize2,
   Minimize2,
   Printer,
+  FileDown,
 } from 'lucide-react'
 
 export interface PresentationViewProps {
@@ -18,14 +19,15 @@ export interface PresentationViewProps {
   onNextSlide: () => void
   onPrevSlide: () => void
   onExitPresentation: () => void
-  onPrintPdf?: () => void
+  onDownloadPdf?: () => Promise<void>
+  onPrint?: () => void
 }
 
 /**
  * Contenedor PresentationView (Capa View)
  * 
- * Modo de proyección inmersivo a pantalla completa.
- * Incluye atajos de teclado (Flechas, Espacio, Escape), barra de progreso y controles flotantes.
+ * Modo de proyección inmersivo a pantalla completa con navegación por teclado.
+ * Incluye contenedor de impresión completo que formatea todas las diapositivas al imprimir.
  */
 export const PresentationView: React.FC<PresentationViewProps> = ({
   project,
@@ -34,7 +36,8 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
   onNextSlide,
   onPrevSlide,
   onExitPresentation,
-  onPrintPdf,
+  onDownloadPdf,
+  onPrint,
 }) => {
   const activeSlide = slides[currentIndex] || slides[0]
   const progressPercent = ((currentIndex + 1) / Math.max(slides.length, 1)) * 100
@@ -75,86 +78,125 @@ export const PresentationView: React.FC<PresentationViewProps> = ({
   }
 
   return (
-    <div className="relative w-screen h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-10 select-none overflow-hidden">
-      {/* Diapositiva Activa con relación de aspecto 16:9 */}
-      <div className="w-full max-w-5xl aspect-[16/9] max-h-[88vh] shadow-2xl transition-all duration-300">
-        {activeSlide && (
-          <SlideRenderer
-            slide={activeSlide}
-            isEditable={false}
-            projectTitle={project.title}
-            author={project.author}
-            currentSlideIndex={currentIndex}
-            totalSlides={slides.length}
-          />
-        )}
-      </div>
-
-      {/* Barra de progreso inferior */}
-      <div className="absolute bottom-0 inset-x-0 h-1.5 bg-slate-800 no-print">
-        <div
-          className="h-full bg-indigo-500 transition-all duration-300"
-          style={{ width: `${progressPercent}%` }}
-        />
-      </div>
-
-      {/* Controles Flotantes para el Presentador (Visibles al pasar el ratón) */}
-      <div className="absolute bottom-6 flex items-center gap-3 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2 rounded-full shadow-2xl opacity-40 hover:opacity-100 transition-opacity no-print">
-        <button
-          onClick={onPrevSlide}
-          disabled={currentIndex === 0}
-          className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-          title="Anterior (Flecha Izq)"
-        >
-          <ChevronLeft className="w-5 h-5" />
-        </button>
-
-        <span className="font-mono text-xs font-semibold text-slate-300 px-2">
-          {currentIndex + 1} / {slides.length}
-        </span>
-
-        <button
-          onClick={onNextSlide}
-          disabled={currentIndex === slides.length - 1}
-          className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
-          title="Siguiente (Espacio o Flecha Der)"
-        >
-          <ChevronRight className="w-5 h-5" />
-        </button>
-
-        <div className="w-px h-4 bg-slate-700 mx-1" />
-
-        <button
-          onClick={toggleFullScreen}
-          className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
-          title="Pantalla Completa"
-        >
-          {document.fullscreenElement ? (
-            <Minimize2 className="w-4 h-4" />
-          ) : (
-            <Maximize2 className="w-4 h-4" />
+    <>
+      {/* Contenedor Interactivo en Pantalla (Oculto en Impresión) */}
+      <div className="relative w-screen h-screen bg-slate-950 flex flex-col items-center justify-center p-4 sm:p-10 select-none overflow-hidden print:hidden">
+        {/* Diapositiva Activa con relación de aspecto 16:9 */}
+        <div className="w-full max-w-5xl aspect-[16/9] max-h-[88vh] shadow-2xl transition-all duration-300">
+          {activeSlide && (
+            <SlideRenderer
+              slide={activeSlide}
+              isEditable={false}
+              projectTitle={project.title}
+              author={project.author}
+              currentSlideIndex={currentIndex}
+              totalSlides={slides.length}
+            />
           )}
-        </button>
+        </div>
 
-        {onPrintPdf && (
+        {/* Barra de progreso inferior */}
+        <div className="absolute bottom-0 inset-x-0 h-1.5 bg-slate-800">
+          <div
+            className="h-full bg-indigo-500 transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        {/* Controles Flotantes para el Presentador (Visibles al pasar el ratón) */}
+        <div className="absolute bottom-6 flex items-center gap-2.5 bg-slate-900/90 backdrop-blur-md border border-slate-700/80 px-4 py-2 rounded-full shadow-2xl opacity-40 hover:opacity-100 transition-opacity">
           <button
-            onClick={onPrintPdf}
-            className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
-            title="Guardar como PDF / Imprimir"
+            onClick={onPrevSlide}
+            disabled={currentIndex === 0}
+            className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+            title="Anterior (Flecha Izq)"
           >
-            <Printer className="w-4 h-4" />
+            <ChevronLeft className="w-5 h-5" />
           </button>
-        )}
 
-        <button
-          onClick={onExitPresentation}
-          className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-600/80 hover:bg-rose-600 text-white transition-colors"
-          title="Salir (Escape)"
-        >
-          <X className="w-3.5 h-3.5" />
-          <span>Salir</span>
-        </button>
+          <span className="font-mono text-xs font-semibold text-slate-300 px-2">
+            {currentIndex + 1} / {slides.length}
+          </span>
+
+          <button
+            onClick={onNextSlide}
+            disabled={currentIndex === slides.length - 1}
+            className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 disabled:opacity-30 disabled:hover:bg-transparent transition-colors"
+            title="Siguiente (Espacio o Flecha Der)"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+
+          <div className="w-px h-4 bg-slate-700 mx-1" />
+
+          <button
+            onClick={toggleFullScreen}
+            className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+            title="Pantalla Completa"
+          >
+            {document.fullscreenElement ? (
+              <Minimize2 className="w-4 h-4" />
+            ) : (
+              <Maximize2 className="w-4 h-4" />
+            )}
+          </button>
+
+          {onDownloadPdf && (
+            <button
+              onClick={onDownloadPdf}
+              className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Descargar archivo PDF"
+            >
+              <FileDown className="w-4 h-4" />
+            </button>
+          )}
+
+          {onPrint && (
+            <button
+              onClick={onPrint}
+              className="p-1.5 rounded-full text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
+              title="Imprimir todas las diapositivas"
+            >
+              <Printer className="w-4 h-4" />
+            </button>
+          )}
+
+          <button
+            onClick={onExitPresentation}
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-600/80 hover:bg-rose-600 text-white transition-colors ml-1"
+            title="Salir (Escape)"
+          >
+            <X className="w-3.5 h-3.5" />
+            <span>Salir</span>
+          </button>
+        </div>
       </div>
-    </div>
+
+      {/* Contenedor Exclusivo de Impresión: Renderiza TODAS las diapositivas en páginas 16:9 */}
+      <div className="hidden print:block w-full bg-white">
+        {slides.map((s, idx) => (
+          <div
+            key={s.id}
+            className="w-screen h-screen flex flex-col justify-between p-8 bg-white"
+            style={{
+              pageBreakAfter: 'always',
+              breakAfter: 'page',
+              height: '100vh',
+              width: '100vw',
+              boxSizing: 'border-box',
+            }}
+          >
+            <SlideRenderer
+              slide={s}
+              isEditable={false}
+              projectTitle={project.title}
+              author={project.author}
+              currentSlideIndex={idx}
+              totalSlides={slides.length}
+            />
+          </div>
+        ))}
+      </div>
+    </>
   )
 }

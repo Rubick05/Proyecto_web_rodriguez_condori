@@ -15,13 +15,20 @@
 }
 
 @media print {
-  header, aside, .no-print, button {
-    display: none !important;
-  }
   body, #root {
     background: #ffffff !important;
     height: auto !important;
+    min-height: 100% !important;
     overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+
+  .print\:block {
+    display: block !important;
   }
 }
-

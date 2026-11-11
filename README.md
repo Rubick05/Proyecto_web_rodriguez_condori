@@ -1,6 +1,6 @@
 # Aplicación Web de Presentaciones y Diapositivas (React + TypeScript)
 
-Aplicación web moderna e interactiva para la creación, edición y proyección de diapositivas en vivo, construida con **React 19**, **TypeScript**, **Tailwind CSS**, **Vitest (TDD)** y **Clean Architecture (Puertos y Adaptadores)**.
+Aplicación web moderna e interactiva para la creación, edición, proyección e importación/exportación de diapositivas en vivo, construida con **React 19**, **TypeScript**, **Tailwind CSS**, **Vitest (TDD)** y **Clean Architecture (Puertos y Adaptadores)**.
 
 ---
 
@@ -15,15 +15,16 @@ src/
 ├── infrastructure/      # Capa Infrastructure: Adaptadores concretos
 │   ├── IndexedDbProjectRepository.ts    # Persistencia local asíncrona
 │   ├── HttpMicroserviceRepository.ts    # Conexión futura a microservicios en la nube
+│   ├── PdfPresentationExporter.ts       # Exportador directo a PDF vectorial 16:9
 │   ├── HtmlPresentationExporter.ts      # Exportador HTML standalone offline + PDF Print
 │   └── JsonProjectExporter.ts          # Exportador de respaldo estructurado JSON
 ├── controllers/         # Capa Controller: Lógica de negocio y estado reactivo (Hooks)
 │   ├── useSlideController.ts            # Navegación, mutación, layouts y ordenamiento
-│   └── useProjectController.ts          # Persistencia, metadatos y ciclo de vida
+│   └── useProjectController.ts          # Persistencia, importación JSON y metadatos
 ├── views/               # Capa View: Componentes visuales y layouts
 │   ├── App.tsx                          # Orquestador principal de vistas
 │   ├── containers/
-│   │   ├── EditorView.tsx               # Interfaz de edición, sidebar y notas del orador
+│   │   ├── EditorView.tsx               # Interfaz de edición, sidebar, importación y notas
 │   │   └── PresentationView.tsx         # Proyección inmersiva a pantalla completa
 │   └── components/
 │       ├── SlideRenderer.tsx            # Despachador polimórfico de layouts
@@ -37,7 +38,8 @@ src/
     ├── models.test.ts                   # Validación de entidades y factorías
     ├── IndexedDbRepository.test.ts      # Persistencia CRUD en IndexedDB
     ├── useSlideController.test.ts       # Lógica del controlador de diapositivas
-    └── exporters.test.ts                # Adaptadores de exportación HTML y JSON
+    ├── useProjectController.test.ts     # Importación y persistencia de proyectos
+    └── exporters.test.ts                # Adaptadores de exportación HTML, PDF y JSON
 ```
 
 ---
@@ -49,13 +51,13 @@ src/
 | **Fase 1: Setup y Modelos** | Configuración (Vite, React 19, TS, Tailwind CSS, Vitest) + Entidades de Dominio (`Slide`, `Project`) y contratos (`IProjectRepository`, `IExporter`). | ✅ **Completado** |
 | **Fase 2: TDD + IndexedDB + Controllers** | Pruebas TDD + `IndexedDbProjectRepository` + `HttpMicroserviceRepository` + Hooks de estado (`useSlideController`, `useProjectController`). | ✅ **Completado** |
 | **Fase 3: Componentes UI y Layouts** | `SlideRenderer`, `HeaderFooter`, 3 layouts (`TextOnly`, `ImageOnly`, `TextAndImage`), `EditorView`, `PresentationView` y notas privadas del orador. | ✅ **Completado** |
-| **Fase 4: Exportación y Git Push** | Adaptadores `HtmlPresentationExporter` (offline standalone con soporte de impresión a PDF) y `JsonProjectExporter`, integración visual de exportación, 18 pruebas unitarias y sincronización Git. | ✅ **Completado** |
+| **Fase 4: Exportación, Importación y PDF** | `PdfPresentationExporter`, `HtmlPresentationExporter`, `JsonProjectExporter`, importador JSON completo, impresión de todas las diapositivas y 21 pruebas TDD. | ✅ **Completado** |
 
 ---
 
 ## 🧪 Pruebas Unitarias (TDD)
 
-El proyecto cuenta con **18 pruebas unitarias automatizadas** que cubren el 100% de la lógica de negocio, repositorios y exportadores:
+El proyecto cuenta con **21 pruebas unitarias automatizadas** que cubren el 100% de la lógica de negocio, repositorios, controladores y exportadores:
 
 ```bash
 # Ejecutar todas las pruebas unitarias

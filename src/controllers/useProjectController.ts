@@ -19,6 +19,7 @@ export interface UseProjectControllerReturn {
   setProject: React.Dispatch<React.SetStateAction<Project>>
   createNewProject: (title?: string, author?: string) => Promise<Project>
   loadProject: (id: string) => Promise<void>
+  importProjectFromJson: (jsonString: string) => Promise<Project>
 }
 
 /**
@@ -121,6 +122,47 @@ export function useProjectController(options?: UseProjectControllerOptions): Use
     }
   }, [repository])
 
+  const importProjectFromJson = useCallback(async (jsonString: string): Promise<Project> => {
+    setIsSaving(true)
+    setError(null)
+    try {
+      const parsed = JSON.parse(jsonString) as Partial<Project>
+      if (!parsed || !Array.isArray(parsed.slides) || parsed.slides.length === 0) {
+        throw new Error('El archivo JSON no contiene diapositivas válidas')
+      }
+
+      const importedProject: Project = {
+        id: parsed.id || `project-${Date.now()}`,
+        title: parsed.title || 'Proyecto Importado',
+        author: parsed.author || '',
+        description: parsed.description || '',
+        slides: parsed.slides.map((s, idx) => ({
+          ...s,
+          order: typeof s.order === 'number' ? s.order : idx,
+          id: s.id || `slide-${Date.now()}-${idx}`,
+          title: s.title || `Diapositiva ${idx + 1}`,
+          layout: s.layout || 'text-only',
+          content: s.content || '',
+          notes: s.notes || '',
+          createdAt: s.createdAt || new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        })),
+        createdAt: parsed.createdAt || new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      }
+
+      await repository.save(importedProject)
+      setProject(importedProject)
+      return importedProject
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Error al importar JSON'
+      setError(msg)
+      throw new Error(msg)
+    } finally {
+      setIsSaving(false)
+    }
+  }, [repository])
+
   return {
     project,
     isLoading,
@@ -131,5 +173,6 @@ export function useProjectController(options?: UseProjectControllerOptions): Use
     setProject,
     createNewProject,
     loadProject,
+    importProjectFromJson,
   }
 }

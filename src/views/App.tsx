@@ -5,6 +5,7 @@ import { EditorView } from './containers/EditorView'
 import { PresentationView } from './containers/PresentationView'
 import { HtmlPresentationExporter } from '../infrastructure/HtmlPresentationExporter'
 import { JsonProjectExporter } from '../infrastructure/JsonProjectExporter'
+import { PdfPresentationExporter } from '../infrastructure/PdfPresentationExporter'
 import { downloadResult } from '../utils/fileDownloader'
 import { Loader2 } from 'lucide-react'
 
@@ -13,7 +14,8 @@ import { Loader2 } from 'lucide-react'
  * 
  * Orquesta los controladores de Proyecto y Diapositivas,
  * gestiona la alternancia entre Modo Edición y Modo Presentación,
- * sincroniza la persistencia reactiva en IndexedDB y coordina los exportadores (Fase 4).
+ * sincroniza la persistencia reactiva en IndexedDB, coordina los exportadores (PDF, HTML, JSON)
+ * y la importación de archivos de respaldo.
  */
 export const App: React.FC = () => {
   const {
@@ -23,6 +25,7 @@ export const App: React.FC = () => {
     saveProject,
     updateProjectMeta,
     setProject,
+    importProjectFromJson,
   } = useProjectController()
 
   const {
@@ -57,7 +60,13 @@ export const App: React.FC = () => {
     }))
   }, [slides, setProject])
 
-  // Handlers de exportación (Fase 4 - IExporter implementations)
+  // Handlers de exportación y descarga directa
+  const handleDownloadPdf = useCallback(async () => {
+    const exporter = new PdfPresentationExporter()
+    const result = await exporter.export({ ...project, slides })
+    downloadResult(result)
+  }, [project, slides])
+
   const handleExportHtml = useCallback(async () => {
     const exporter = new HtmlPresentationExporter()
     const result = await exporter.export({ ...project, slides })
@@ -70,9 +79,16 @@ export const App: React.FC = () => {
     downloadResult(result)
   }, [project, slides])
 
-  const handlePrintPdf = useCallback(() => {
+  const handlePrint = useCallback(() => {
     window.print()
   }, [])
+
+  // Handler de importación de proyecto completo desde JSON
+  const handleImportProject = useCallback(async (jsonString: string) => {
+    const imported = await importProjectFromJson(jsonString)
+    setSlides(imported.slides)
+    goToSlide(0)
+  }, [importProjectFromJson, setSlides, goToSlide])
 
   // Pantalla de carga mientras se inicializa IndexedDB
   if (isLoading) {
@@ -95,7 +111,8 @@ export const App: React.FC = () => {
         onNextSlide={nextSlide}
         onPrevSlide={prevSlide}
         onExitPresentation={() => setIsPresentationMode(false)}
-        onPrintPdf={handlePrintPdf}
+        onDownloadPdf={handleDownloadPdf}
+        onPrint={handlePrint}
       />
     )
   }
@@ -116,7 +133,9 @@ export const App: React.FC = () => {
       onStartPresentation={() => setIsPresentationMode(true)}
       onExportHtml={handleExportHtml}
       onExportJson={handleExportJson}
-      onPrintPdf={handlePrintPdf}
+      onDownloadPdf={handleDownloadPdf}
+      onPrint={handlePrint}
+      onImportProject={handleImportProject}
       isSaving={isSaving}
     />
   )
