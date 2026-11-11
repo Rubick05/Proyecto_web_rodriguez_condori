@@ -1,0 +1,106 @@
+{
+  "id": "proyecto-fases-arquitectura-web",
+  "title": "Motor Web Reactivo de Diapositivas: Análisis de Fases",
+  "author": "Rubick05",
+  "description": "Presentación interactiva completa que exhibe la evolución, lógica y arquitectura de las 4 fases desarrolladas con Clean Architecture y TDD.",
+  "createdAt": "2026-11-11T12:00:00.000Z",
+  "updatedAt": "2026-11-11T12:00:00.000Z",
+  "slides": [
+    {
+      "id": "slide-fase-1",
+      "title": "1. Visión y Desafío de Ingeniería",
+      "layout": "text-only",
+      "content": "• El problema: Las herramientas tradicionales dependen de la nube y saturan el LocalStorage (límite 5 MB).\n• Nuestra propuesta: Un motor web de diapositivas con Clean Architecture, offline-first y desacoplado.\n• Metodología: TDD (Test-Driven Development) con 21 pruebas unitarias automáticas aprobadas.",
+      "notes": "Destacar la importancia del desacoplamiento arquitectónico y el almacenamiento offline.",
+      "order": 0,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-2",
+      "title": "2. Arquitectura Limpia y Desacoplamiento Hexagonal",
+      "layout": "text-and-image",
+      "content": "• Capa Dominio: Entidades puras Slide y Project sin dependencias de React.\n• Capa Puertos: Interfaces IProjectRepository e IExporter para Inversión de Dependencias (DIP).\n• Capa Controladores: Hooks useSlideController y useProjectController inmutables.\n• Capa Infraestructura: Adaptadores concretos intercambiables.",
+      "imageUrl": "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1000&auto=format&fit=crop&q=80",
+      "imageCaption": "Diagrama de capas concéntricas de Clean Architecture",
+      "notes": "Explicar cómo la inversión de dependencias permite cambiar IndexedDB por una API sin tocar la UI.",
+      "order": 1,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-3",
+      "title": "3. Fase 1: Dominio Puro y Contratos de Inversión",
+      "layout": "text-only",
+      "content": "• Definición estricta de Slide: id, title, layout, content, imageUrl, notes y order.\n• 3 Layouts tipados: 'text-only', 'image-only' y 'text-and-image'.\n• Factorías puras: createDefaultSlide y createDefaultProject garantizan estados válidos.\n• Aislamiento total del framework: el dominio puede ejecutarse en Node.js o React Native.",
+      "notes": "Mencionar que desde el día uno las notas del orador estaban previstas en el contrato de dominio.",
+      "order": 2,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-4",
+      "title": "4. Fase 2: Persistencia IndexedDB y Controladores con TDD",
+      "layout": "text-and-image",
+      "content": "• IndexedDbProjectRepository: Almacenamiento local asíncrono que supera el límite de 5 MB de LocalStorage.\n• useSlideController: Navegación protegida, reordenamiento con splice y regla anti-borrado de la última slide.\n• useProjectController: Orquestador de I/O, carga inicial y estados isLoading/isSaving.\n• Suite TDD: 11 pruebas unitarias automáticas escritas antes de la implementación.",
+      "imageUrl": "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1200&auto=format&fit=crop&q=80",
+      "imageCaption": "Persistencia asíncrona y almacenamiento masivo en IndexedDB",
+      "notes": "Enfatizar que la guarda en deleteSlide impide dejar la presentación en 0 diapositivas.",
+      "order": 3,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-5",
+      "title": "5. Fase 3: Experiencia Dual (Editor vs Proyector)",
+      "layout": "text-only",
+      "content": "• EditorView: Canvas 16:9, sidebar de miniaturas reordenables y barra de herramientas en vivo.\n• Notas Privadas del Orador: Panel desplegable flotante exclusivo para el autor que no se proyecta.\n• PresentationView: Modo escénico oscuro, atajos de teclado globales y pantalla completa nativa.\n• SlideRenderer Polimórfico: Despacho Strategy encapsulado en el marco HeaderFooter.",
+      "notes": "Hacer una demostración rápida de los atajos de teclado y la barra de progreso reactiva.",
+      "order": 4,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-6",
+      "title": "6. Fase 4: Visor Embebido Autónomo y Portabilidad Universal",
+      "layout": "text-and-image",
+      "content": "• HtmlPresentationExporter: Genera un archivo HTML único con CSS 16:9 y mini-motor JavaScript Vanilla propio.\n• Cero dependencias: Se abre con doble clic en cualquier equipo sin Node.js ni internet.\n• Sanitización Anti-XSS: escapeHtml() neutraliza inyecciones maliciosas de código.\n• Salida PDF Directa: PdfPresentationExporter genera archivos PDF vectoriales 16:9 con jsPDF.",
+      "imageUrl": "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=1200&auto=format&fit=crop&q=80",
+      "imageCaption": "Visor autónomo embebido: ejecutable sin internet ni servidor",
+      "notes": "Explicar cómo el mini-motor vanilla IIFE replica la navegación sin importar React.",
+      "order": 5,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-7",
+      "title": "7. Fase 4: Impresión Multi-página y Ciclo JSON",
+      "layout": "text-only",
+      "content": "• Solución de Impresión: Contenedor oculto en DOM que renderiza todas las diapositivas con page-break-after: always.\n• Impresión Fidedigna: El navegador genera un PDF con 1 página por diapositiva (1 a N).\n• Respaldo JSON: Exportación ultraligera del proyecto en estructura portable.\n• Carga y Restauración: importProjectFromJson() valida e inyecta las diapositivas al 100%.",
+      "notes": "Mostrar cómo el botón 'Cargar JSON' permite restaurar este archivo al instante.",
+      "order": 6,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-8",
+      "title": "8. Garantía de Calidad: 21 Pruebas Unitarias al 100%",
+      "layout": "text-only",
+      "content": "• models.test.ts (2 tests): Factorías de dominio y marcas de tiempo ISO.\n• IndexedDbRepository.test.ts (5 tests): Operaciones CRUD en entorno jsdom con fake-indexeddb.\n• useSlideController.test.ts (6 tests): Navegación, ordenamiento y guarda anti-borrado.\n• useProjectController.test.ts (2 tests): Validación de JSON y persistencia.\n• exporters.test.ts (6 tests): Generación HTML, Blob PDF, impresión y sanitización XSS.",
+      "notes": "Mencionar que todas las pruebas corren en menos de 7 segundos en Vitest.",
+      "order": 7,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    },
+    {
+      "id": "slide-fase-9",
+      "title": "9. Conclusiones y Factores Distintivos",
+      "layout": "text-only",
+      "content": "• Autonomía Total: Funcionamiento offline sin APIs de pago ni ataduras al servidor.\n• Arquitectura Desacoplada: Fácilmente ampliable a nuevos layouts o persistencia en nube.\n• Confiabilidad TDD: 21 pruebas unitarias automáticas respaldan cada funcionalidad.\n• Interoperabilidad Universal: Exporta a PDF, HTML embebido y JSON para restaurar.",
+      "notes": "Agradecer al público y abrir espacio para preguntas sobre la implementación.",
+      "order": 8,
+      "createdAt": "2026-11-11T12:00:00.000Z",
+      "updatedAt": "2026-11-11T12:00:00.000Z"
+    }
+  ]
+}
