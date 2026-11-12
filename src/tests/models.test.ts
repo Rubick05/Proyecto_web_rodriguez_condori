@@ -10,6 +10,9 @@ describe('Domain Models & Factories', () => {
     expect(slide.layout).toBe('text-only')
     expect(slide.order).toBe(0)
     expect(slide.createdAt).toBeDefined()
+    expect(slide.typography).toBeDefined()
+    expect(slide.typography?.fontFamily).toBe('sans')
+    expect(slide.imageConfig).toBeDefined()
   })
 
   it('should create a valid default project with an initial slide', () => {

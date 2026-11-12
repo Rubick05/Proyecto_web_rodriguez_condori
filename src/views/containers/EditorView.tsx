@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react'
 import type { Project } from '../../models/Project'
 import type { Slide, SlideLayoutType } from '../../models/Slide'
 import { SlideRenderer } from '../components/SlideRenderer'
+import { FormattingToolbar } from '../components/FormattingToolbar'
 import {
   Play,
   Plus,
@@ -397,8 +398,18 @@ export const EditorView: React.FC<EditorViewProps> = ({
           </aside>
 
           {/* Área Central: Canvas del Diapositiva */}
-          <main className="flex-1 flex flex-col items-center justify-center p-6 md:p-10 overflow-hidden relative">
-            <div className="w-full max-w-4xl aspect-[16/9] max-h-[75vh]">
+          <main className="flex-1 flex flex-col items-center justify-center p-3 md:p-6 overflow-hidden relative">
+            {/* Barra Flotante de Formato Tipográfico */}
+            {activeSlide && (
+              <div className="mb-2 shrink-0">
+                <FormattingToolbar
+                  typography={activeSlide.typography}
+                  onUpdateTypography={(typography) => onUpdateActiveSlide({ typography })}
+                />
+              </div>
+            )}
+
+            <div className="w-full max-w-4xl aspect-[16/9] max-h-[72vh]">
               {activeSlide ? (
                 <SlideRenderer
                   slide={activeSlide}

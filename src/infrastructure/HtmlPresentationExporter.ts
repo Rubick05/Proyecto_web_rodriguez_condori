@@ -456,8 +456,17 @@ export class HtmlPresentationExporter implements IExporter {
   ): string {
     const safeSlideTitle = escapeHtml(slide.title)
     const safeContent = escapeHtml(slide.content)
-    const safeCaption = escapeHtml(slide.imageCaption || '')
+    const imgUrl = escapeHtml(slide.imageConfig?.url || slide.imageUrl || '')
+    const safeCaption = escapeHtml(slide.imageConfig?.caption || slide.imageCaption || '')
     const activeClass = index === 0 ? ' active' : ''
+
+    const typo = slide.typography
+    const fontFamilyStyle = typo?.fontFamily === 'serif' ? 'font-family: Georgia, serif;' : typo?.fontFamily === 'mono' ? 'font-family: ui-monospace, Consolas, monospace;' : ''
+    const fontWeightStyle = typo?.isBold === false ? 'font-weight: normal;' : 'font-weight: 800;'
+    const fontItalicStyle = typo?.isItalic ? 'font-style: italic;' : ''
+    const textAlignStyle = typo?.textAlign ? `text-align: ${typo.textAlign};` : ''
+    const titleCustomStyle = `${fontFamilyStyle} ${fontWeightStyle} ${fontItalicStyle} ${textAlignStyle}`.trim()
+    const contentCustomStyle = `${fontFamilyStyle} ${fontItalicStyle} ${textAlignStyle}`.trim()
 
     let layoutContent = ''
 
@@ -465,9 +474,9 @@ export class HtmlPresentationExporter implements IExporter {
       case 'image-only':
         layoutContent = `
           <div class="layout-image-only">
-            ${safeSlideTitle ? `<h2>${safeSlideTitle}</h2>` : ''}
+            ${safeSlideTitle ? `<h2 style="${titleCustomStyle}">${safeSlideTitle}</h2>` : ''}
             <div class="img-box">
-              <img src="${escapeHtml(slide.imageUrl || '')}" alt="${safeSlideTitle}" />
+              <img src="${imgUrl}" alt="${safeSlideTitle}" />
             </div>
             ${safeCaption ? `<p class="caption">${safeCaption}</p>` : ''}
           </div>`
@@ -477,12 +486,12 @@ export class HtmlPresentationExporter implements IExporter {
         layoutContent = `
           <div class="layout-text-and-image">
             <div>
-              <h2>${safeSlideTitle}</h2>
-              <p>${safeContent}</p>
+              <h2 style="${titleCustomStyle}">${safeSlideTitle}</h2>
+              <p style="${contentCustomStyle}">${safeContent}</p>
             </div>
             <div>
               <div class="img-box">
-                <img src="${escapeHtml(slide.imageUrl || '')}" alt="${safeSlideTitle}" />
+                <img src="${imgUrl}" alt="${safeSlideTitle}" />
               </div>
               ${safeCaption ? `<p style="font-size: 0.75rem; color: #94a3b8; font-style: italic; text-align: center; margin-top: 0.5rem;">${safeCaption}</p>` : ''}
             </div>
@@ -493,8 +502,8 @@ export class HtmlPresentationExporter implements IExporter {
       default:
         layoutContent = `
           <div class="layout-text-only">
-            <h2>${safeSlideTitle}</h2>
-            <p>${safeContent}</p>
+            <h2 style="${titleCustomStyle}">${safeSlideTitle}</h2>
+            <p style="${contentCustomStyle}">${safeContent}</p>
           </div>`
         break
     }

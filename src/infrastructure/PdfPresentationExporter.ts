@@ -62,10 +62,16 @@ export class PdfPresentationExporter implements IExporter {
 
       // 3. Contenido según el layout
       const slideTitle = slide.title || `Diapositiva ${index + 1}`
+      const imgUrl = slide.imageConfig?.url || slide.imageUrl || ''
+      const imgCaption = slide.imageConfig?.caption || slide.imageCaption || ''
+
+      const typoFont = slide.typography?.fontFamily === 'serif' ? 'times' : slide.typography?.fontFamily === 'mono' ? 'courier' : 'helvetica'
+      const titleStyle = slide.typography?.isItalic ? (slide.typography.isBold !== false ? 'bolditalic' : 'italic') : (slide.typography?.isBold !== false ? 'bold' : 'normal')
+      const bodyStyle = slide.typography?.isItalic ? 'italic' : 'normal'
 
       switch (slide.layout) {
         case 'image-only': {
-          doc.setFont('helvetica', 'bold')
+          doc.setFont(typoFont, titleStyle)
           doc.setFontSize(18)
           doc.setTextColor(15, 23, 42)
           doc.text(slideTitle, 148.5, 34, { align: 'center' })
@@ -79,23 +85,23 @@ export class PdfPresentationExporter implements IExporter {
           doc.setFont('helvetica', 'italic')
           doc.setFontSize(10)
           doc.setTextColor(148, 163, 184)
-          doc.text(slide.imageUrl ? `[Imagen: ${slide.imageUrl.slice(0, 50)}...]` : '[Imagen Principal]', 148.5, 88, { align: 'center' })
+          doc.text(imgUrl ? `[Imagen cargada]` : '[Imagen Principal]', 148.5, 88, { align: 'center' })
 
-          if (slide.imageCaption) {
-            doc.text(slide.imageCaption, 148.5, 142, { align: 'center' })
+          if (imgCaption) {
+            doc.text(imgCaption, 148.5, 142, { align: 'center' })
           }
           break
         }
 
         case 'text-and-image': {
           // Columna Izquierda: Texto
-          doc.setFont('helvetica', 'bold')
+          doc.setFont(typoFont, titleStyle)
           doc.setFontSize(18)
           doc.setTextColor(15, 23, 42)
           const titleLines = doc.splitTextToSize(slideTitle, 120)
           doc.text(titleLines, 20, 40)
 
-          doc.setFont('helvetica', 'normal')
+          doc.setFont(typoFont, bodyStyle)
           doc.setFontSize(11)
           doc.setTextColor(71, 85, 105)
           const contentLines = doc.splitTextToSize(slide.content || '', 120)
@@ -110,23 +116,23 @@ export class PdfPresentationExporter implements IExporter {
           doc.setFont('helvetica', 'italic')
           doc.setFontSize(9)
           doc.setTextColor(148, 163, 184)
-          doc.text(slide.imageUrl ? `[Imagen: ${slide.imageUrl.slice(0, 40)}...]` : '[Soporte Visual]', 212.5, 84, { align: 'center' })
+          doc.text(imgUrl ? `[Imagen cargada]` : '[Soporte Visual]', 212.5, 84, { align: 'center' })
 
-          if (slide.imageCaption) {
-            doc.text(slide.imageCaption, 212.5, 137, { align: 'center' })
+          if (imgCaption) {
+            doc.text(imgCaption, 212.5, 137, { align: 'center' })
           }
           break
         }
 
         case 'text-only':
         default: {
-          doc.setFont('helvetica', 'bold')
+          doc.setFont(typoFont, titleStyle)
           doc.setFontSize(22)
           doc.setTextColor(15, 23, 42)
           const titleLines = doc.splitTextToSize(slideTitle, 240)
           doc.text(titleLines, 20, 45)
 
-          doc.setFont('helvetica', 'normal')
+          doc.setFont(typoFont, bodyStyle)
           doc.setFontSize(12)
           doc.setTextColor(71, 85, 105)
           const contentLines = doc.splitTextToSize(slide.content || '', 240)
